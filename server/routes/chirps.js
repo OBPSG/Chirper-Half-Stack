@@ -5,20 +5,45 @@ const router = express.Router();
 const mySql = require("mysql");
 
 // REST API
-// const connection = mySql.createConnection({
+const connection = mySql.createConnection({
+    host: "localhost",
+    user: "chirprapp",
+    password: "Secr3t2Every1",
+    database: "chirpr"
+});
 
-// })
+// connection test
+// connection.connect(function(err) {
+//     if (err) {
+//       console.error('error connecting: ' + err.stack);
+//       return;
+//     }
+   
+//     console.log('connected as id ' + connection.threadId);
+//   });
 
 
 router.get("/:id?", (req, res) => {
     const id = req.params.id;
 
     if (id) {
-        // const chirp = chirpsStore.GetChirp(id);
-        res.json(chirp);
+        connection.query("SELECT * FROM chirps WHERE id = " + id, (err, results, fields) => {
+            if(err) {
+                console.log(err);
+                res.sendStatus(500);}
+            else {
+                res.json(results);
+            }
+        });
     } else {
-        const chirps = chirpsStore.GetChirps();
-        res.json(chirps);
+        connection.query("SELECT * FROM chirps", (err, results, fields) => {
+            if(err) {
+                console.log(err)
+                res.sendStatus(500);}
+            else {
+                res.json(results);
+            }
+        });
     }
 });
 
