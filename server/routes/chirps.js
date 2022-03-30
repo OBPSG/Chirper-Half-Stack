@@ -18,7 +18,7 @@ const connection = mySql.createConnection({
 //       console.error('error connecting: ' + err.stack);
 //       return;
 //     }
-   
+
 //     console.log('connected as id ' + connection.threadId);
 //   });
 
@@ -28,18 +28,20 @@ router.get("/:id?", (req, res) => {
 
     if (id) {
         connection.query("SELECT * FROM chirps WHERE id = " + id, (err, results, fields) => {
-            if(err) {
+            if (err) {
                 console.log(err);
-                res.sendStatus(500);}
+                res.sendStatus(500);
+            }
             else {
                 res.json(results);
             }
         });
     } else {
         connection.query("SELECT * FROM chirps", (err, results, fields) => {
-            if(err) {
+            if (err) {
                 console.log(err)
-                res.sendStatus(500);}
+                res.sendStatus(500);
+            }
             else {
                 res.json(results);
             }
@@ -50,14 +52,13 @@ router.get("/:id?", (req, res) => {
 // Create
 router.post("/", (req, res) => {
     const body = req.body;
-    const queryString = `INSERT INTO chirps (userid, content, location) VALUES (${connection.escape(body.userId)}, ${connection.escape(body.content)}, ${connection.escape(body.location)})`
+    const queryString = `INSERT INTO chirps (userid, content, location) VALUES (${connection.escape(body.userId)}, ${connection.escape(body.content)}, ${connection.escape(body.location)})`;
     connection.query(queryString, (err, results, fields) => {
-        if(err)
-        {
+        if (err) {
             console.log(err);
             res.sendStatus(500);
         }
-        else{
+        else {
             res.sendStatus(200);
         }
     });
@@ -66,17 +67,32 @@ router.post("/", (req, res) => {
 // Delete
 router.delete("/:id", (req, res) => {
     const id = req.params.id;
-    // chirpsStore.DeleteChirp(id);
-    res.sendStatus(200);
+    const queryString = `DELETE FROM chirps WHERE id = ${connection.escape(id)}`;
+    connection.query(queryString, (err, results, fields) => {
+        if (err) {
+            console.log(err);
+            res.sendStatus(500);
+        }
+        else {
+            res.sendStatus(200);
+        }
+    });
 });
 
 // Update
 router.put("/:id", (req, res) => {
     const id = req.params.id;
     const body = req.body;
-
-    // chirpsStore.UpdateChirp(id, body);
-    res.sendStatus(200);
+    const queryString = `UPDATE chirps SET content = ${connection.escape(body.content)}, location = ${connection.escape(body.location)} WHERE id = ${connection.escape(id)}`;
+    connection.query(queryString, (err, results, fields) => {
+        if (err) {
+            console.log(err);
+            res.sendStatus(500);
+        }
+        else {
+            res.sendStatus(200);
+        }
+    });
 });
 
 module.exports = router;
