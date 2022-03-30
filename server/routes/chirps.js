@@ -50,9 +50,17 @@ router.get("/:id?", (req, res) => {
 // Create
 router.post("/", (req, res) => {
     const body = req.body;
-
-    // chirpsStore.CreateChirp(body);
-    res.sendStatus(200);
+    const queryString = `INSERT INTO chirps (userid, content, location) VALUES (${connection.escape(body.userId)}, ${connection.escape(body.content)}, ${connection.escape(body.location)})`
+    connection.query(queryString, (err, results, fields) => {
+        if(err)
+        {
+            console.log(err);
+            res.sendStatus(500);
+        }
+        else{
+            res.sendStatus(200);
+        }
+    });
 });
 
 // Delete
